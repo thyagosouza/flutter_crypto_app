@@ -14,14 +14,44 @@ class _MoedasPageState extends State<MoedasPage> {
   final tabela = MoedaRepository.tabela;
   NumberFormat real = NumberFormat.currency(locale: 'pt_Br', name: 'R\$');
   List<MoedaModel> selecionadas = [];
+
+  appBarDinamica() {
+    if (selecionadas.isEmpty) {
+      return AppBar(
+        title: const Text('Crypto Moedas'),
+      );
+    } else {
+      return AppBar(
+        backgroundColor: Colors.blueGrey[50],
+        iconTheme: IconThemeData(color: Colors.black87),
+        elevation: 1,
+        leading: IconButton(
+          onPressed: () {
+            setState(() {
+              selecionadas.clear();
+            });
+          },
+          icon: const Icon(
+            Icons.close,
+          ),
+        ),
+        titleTextStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        title: Text(
+          ' ${selecionadas.length} selecionadas',
+        ),
+      );
+    }
+  }
+
+  //
   @override
   Widget build(BuildContext context) {
-    //bool isSeleted = false;
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Crypto Moedas'),
-      ),
+      appBar: appBarDinamica(),
       //* itemBuilder = construir cada uma das nossas linhas
       body: ListView.separated(
           itemBuilder: (BuildContext context, int moeda) {
@@ -33,7 +63,7 @@ class _MoedasPageState extends State<MoedasPage> {
 
               //* leading = icone que vai à esquerda
               leading: selecionadas.contains(tabela[moeda])
-                  ? CircleAvatar(
+                  ? const CircleAvatar(
                       child: Icon(Icons.check),
                     )
                   : SizedBox(
@@ -66,6 +96,20 @@ class _MoedasPageState extends State<MoedasPage> {
           padding: const EdgeInsets.all(16),
           separatorBuilder: (_, __) => const Divider(),
           itemCount: tabela.length),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: selecionadas.isNotEmpty
+          ? FloatingActionButton.extended(
+              icon: Icon(Icons.star),
+              label: Text(
+                'FAVORITAR',
+                style: TextStyle(
+                  letterSpacing: 0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {},
+            )
+          : null,
     );
   }
 }
