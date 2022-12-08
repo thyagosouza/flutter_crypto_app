@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../configs/app_settings.dart';
 import '../pages/moedas_detalhes_page.dart';
 import '../repositories/favoritas_repository.dart';
 
@@ -16,7 +17,19 @@ class MoedaCard extends StatefulWidget {
 }
 
 class _MoedaCardState extends State<MoedaCard> {
-  NumberFormat real = NumberFormat.currency(locale: 'pt_BR', name: 'R\$');
+  late NumberFormat real;
+  late Map<String, String> loc;
+  //NumberFormat real = NumberFormat.currency(locale: 'pt_BR', name: 'R\$');
+
+  //* metodo para fazer a inicialização da Localização quanto do numberformat
+  readNumberFormat() {
+    //? a preferencia ficará dinamica
+    loc = context.watch<AppSettings>().locale;
+    real = NumberFormat.currency(
+      locale: loc['locale'],
+      name: loc['name'],
+    );
+  }
 
   static Map<String, Color> precoColor = <String, Color>{
     'up': Colors.teal,
@@ -34,6 +47,7 @@ class _MoedaCardState extends State<MoedaCard> {
 
   @override
   Widget build(BuildContext context) {
+    readNumberFormat();
     return Card(
       margin: EdgeInsets.only(top: 12),
       elevation: 2,

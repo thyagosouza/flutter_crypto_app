@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:crypto_moedas/models/moeda_model.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../configs/app_settings.dart';
 
 class MoedasDetalhesPage extends StatefulWidget {
   final MoedaModel moeda;
@@ -18,10 +21,22 @@ class MoedasDetalhesPage extends StatefulWidget {
 }
 
 class _MoedasDetalhesPageState extends State<MoedasDetalhesPage> {
-  NumberFormat real = NumberFormat.currency(locale: 'pt_Br', name: 'R\$');
+  late NumberFormat real;
+  late Map<String, String> loc;
+  // NumberFormat real = NumberFormat.currency(locale: 'pt_Br', name: 'R\$');
   final _formKey = GlobalKey<FormState>();
   final _valor = TextEditingController();
   double quantidade = 0;
+
+  //* metodo para fazer a inicialização da Localização quanto do numberformat
+  readNumberFormat() {
+    //? a preferencia ficará dinamica
+    loc = context.watch<AppSettings>().locale;
+    real = NumberFormat.currency(
+      locale: loc['locale'],
+      name: loc['name'],
+    );
+  }
 
   comprar() {
     //? validate pode ser null, por isso o ponto de exclamação
@@ -38,6 +53,7 @@ class _MoedasDetalhesPageState extends State<MoedasDetalhesPage> {
   //
   @override
   Widget build(BuildContext context) {
+    readNumberFormat();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.moeda.nome),

@@ -1,3 +1,4 @@
+import 'package:crypto_moedas/configs/app_settings.dart';
 import 'package:crypto_moedas/models/moeda_model.dart';
 import 'package:crypto_moedas/pages/moedas_detalhes_page.dart';
 import 'package:crypto_moedas/repositories/favoritas_repository.dart';
@@ -15,14 +16,49 @@ class MoedasPage extends StatefulWidget {
 
 class _MoedasPageState extends State<MoedasPage> {
   final tabela = MoedaRepository.tabela;
-  NumberFormat real = NumberFormat.currency(locale: 'pt_Br', name: 'R\$');
+  //NumberFormat real = NumberFormat.currency(locale: 'pt_Br', name: 'R\$');
+  late NumberFormat real;
+  late Map<String, String> loc;
   List<MoedaModel> selecionadas = [];
   late FavoritasRepository favoritas = FavoritasRepository();
+
+  //* metodo para fazer a inicialização da Localização quanto do numberformat
+  readNumberFormat() {
+    //? a preferencia ficará dinamica
+    loc = context.watch<AppSettings>().locale;
+    real = NumberFormat.currency(
+      locale: loc['locale'],
+      name: loc['name'],
+    );
+  }
+
+  //? BOTÃO PARA ALTERAR A CURRENCY
+  changeLanguageButton() {
+    final locale = loc['locale'] == 'pt_BR' ? 'en_US' : 'pt_BR';
+    final name = loc['locale'] == 'pt_BR' ? '\$' : 'R\$';
+
+    return PopupMenuButton(
+      icon: Icon(Icons.language),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+            child: ListTile(
+          leading: Icon(Icons.swap_vert),
+          title: Text('Usar $locale'),
+          onTap: () {
+            context.read<AppSettings>().setLocale(locale, name);
+            //? Fechar o menu Button
+            Navigator.pop(context);
+          },
+        ))
+      ],
+    );
+  }
 
   appBarDinamica() {
     if (selecionadas.isEmpty) {
       return AppBar(
         title: Text('Crypto Moedas'),
+        actions: [changeLanguageButton()],
       );
     } else {
       return AppBar(
@@ -32,7 +68,7 @@ class _MoedasPageState extends State<MoedasPage> {
         leading: IconButton(
           onPressed: () {
             setState(() {
-              selecionadas.clear();
+              selecionadas = [];
             });
           },
           icon: const Icon(
@@ -73,6 +109,7 @@ class _MoedasPageState extends State<MoedasPage> {
     //favoritas = Provider.of<FavoritasRepository>(context);
     //? ACESSAR PROVIDER PELO CONTEXT
     favoritas = context.watch<FavoritasRepository>();
+    readNumberFormat();
 
     //
     return Scaffold(
