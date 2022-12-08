@@ -1,8 +1,10 @@
 import 'package:crypto_moedas/models/moeda_model.dart';
 import 'package:crypto_moedas/pages/moedas_detalhes_page.dart';
+import 'package:crypto_moedas/repositories/favoritas_repository.dart';
 import 'package:crypto_moedas/repositories/moeda_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MoedasPage extends StatefulWidget {
   const MoedasPage({Key? key}) : super(key: key);
@@ -15,11 +17,12 @@ class _MoedasPageState extends State<MoedasPage> {
   final tabela = MoedaRepository.tabela;
   NumberFormat real = NumberFormat.currency(locale: 'pt_Br', name: 'R\$');
   List<MoedaModel> selecionadas = [];
+  late FavoritasRepository favoritas = FavoritasRepository();
 
   appBarDinamica() {
     if (selecionadas.isEmpty) {
       return AppBar(
-        title: const Text('Crypto Moedas'),
+        title: Text('Crypto Moedas'),
       );
     } else {
       return AppBar(
@@ -57,9 +60,21 @@ class _MoedasPageState extends State<MoedasPage> {
     );
   }
 
+  limparSelecionadas() {
+    setState(() {
+      selecionadas = [];
+    });
+  }
+
   //
   @override
   Widget build(BuildContext context) {
+    //* INSTÂNCIA DO PROVIDER
+    //favoritas = Provider.of<FavoritasRepository>(context);
+    //? ACESSAR PROVIDER PELO CONTEXT
+    favoritas = context.watch<FavoritasRepository>();
+
+    //
     return Scaffold(
       appBar: appBarDinamica(),
       //* itemBuilder = construir cada uma das nossas linhas
@@ -80,13 +95,19 @@ class _MoedasPageState extends State<MoedasPage> {
                       width: 40,
                       child: Image.asset(tabela[moeda].icone),
                     ),
-              title: Text(
-                tabela[moeda].nome,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                  //color: Theme.of(context).primaryColor,
-                ),
+              title: Row(
+                children: [
+                  Text(
+                    tabela[moeda].nome,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      //color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  if (favoritas.lista.contains(tabela[moeda]))
+                    Icon(Icons.star, color: Colors.amber, size: 8),
+                ],
               ),
               trailing: Text(real.format(tabela[moeda].preco)),
 
@@ -118,7 +139,12 @@ class _MoedasPageState extends State<MoedasPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                //? NÃO PRECISA DO SET STATE
+                //? NOTIFYLISTERNERS JÁ ESTÁ ATUALIZANDO
+                favoritas.saveAll(selecionadas);
+                limparSelecionadas();
+              },
             )
           : null,
     );
