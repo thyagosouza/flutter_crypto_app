@@ -1,6 +1,7 @@
 import 'package:crypto_moedas/pages/moedas_page.dart';
 import 'package:flutter/material.dart';
 
+import 'configuracoes_page.dart';
 import 'favoritas_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           MoedasPage(),
           FavoritasPage(),
+          ConfiguracoesPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -55,6 +57,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.star),
             label: 'Favoritos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Conta',
           ),
         ],
         backgroundColor: Colors.grey[100],
