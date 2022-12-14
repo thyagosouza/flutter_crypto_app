@@ -40,6 +40,8 @@ class DB {
     await db.execute(_carteira);
     //? HISTORICO DE OPERAÇÕES
     await db.execute(_historico);
+    //? MOEDAS FAVORITAS
+    await db.execute(_favoritas);
     //? INSERIR A CONTA COM O SALDO ZERADO
     await db.insert('conta', {'saldo': 0});
   }
@@ -71,6 +73,16 @@ class DB {
       sigla TEXT,
       valor REAL,
       quantidade TEXT
+    );
+  
+  ''';
+  String get _favoritas => '''
+    CREATE TABLE favoritas (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      icone TEXT,
+      nome TEXT,
+      sigla TEXT,
+      preco REAL,
     );
   
   ''';

@@ -1,6 +1,7 @@
 import 'package:crypto_moedas/pages/moedas_page.dart';
 import 'package:flutter/material.dart';
 
+import 'carteira_page.dart';
 import 'configuracoes_page.dart';
 import 'favoritas_page.dart';
 
@@ -37,10 +38,13 @@ class _HomePageState extends State<HomePage> {
         children: [
           MoedasPage(),
           FavoritasPage(),
+          CarteiraPage(),
           ConfiguracoesPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        //? IMPEDE SCROLL DE ICONES COM MAIS DE 3 ICONES
+        type: BottomNavigationBarType.fixed,
         onTap: (pagina) {
           pc.animateToPage(
             pagina,
@@ -57,6 +61,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.star),
             label: 'Favoritos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance_wallet),
+            label: 'Carteira',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
